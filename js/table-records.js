@@ -131,12 +131,21 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.edit-record').forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
-                const id = this.getAttribute('data-id');
-                console.log('Editing record with ID:', id);
-                // Logic for editing the record can go here
+                const id = this.getAttribute('data-id'); // Get the ID from the clicked link
+
+                // Find the specific record in the recordsData array using the ID
+                const record = recordsData.find(r => r.id === id);
+
+                if (record) {
+                    // Open the form modal and pre-fill it with the record data
+                    openForm(record);
+                } else {
+                    console.error('Record not found with ID:', id);
+                }
             });
         });
     }
+
 
     // Add delete event listeners
     function addDeleteEventListeners() {

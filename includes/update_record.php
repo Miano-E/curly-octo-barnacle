@@ -2,71 +2,78 @@
 // Include the database connection
 include 'connect.php';
 
+header('Content-Type: application/json');  // Ensure the response is always JSON
+
+$response = [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $recordType = $_POST['recordType'] ?? '';
+    $recordId = $_POST['id'] ?? '';
     
-    $recordType = $_POST['recordType'];
-    $recordId = $_POST['id'];
-    $response = '';
+    if (empty($recordType) || empty($recordId)) {
+        // Return a JSON response for missing fields
+        echo json_encode(['status' => 'error', 'message' => 'Invalid record type or ID']);
+        exit;
+    }
 
     if ($recordType === 'eggs') {
-        $eggCount = $_POST['eggCount'];
-        $eggDate = $_POST['eggDate'];
+        $eggCount = $_POST['eggCount'] ?? null;
+        $eggDate = $_POST['eggDate'] ?? null;
 
         $sql = "UPDATE eggs SET egg_count = ?, date = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('isi', $eggCount, $eggDate, $recordId);
 
     } elseif ($recordType === 'birds') {
-        $birdType = $_POST['birdType'];
-        $birdQuantity = $_POST['birdQuantity'];
+        $birdType = $_POST['birdType'] ?? '';
+        $birdQuantity = $_POST['birdQuantity'] ?? null;
 
         $sql = "UPDATE birds SET bird_type = ?, bird_quantity = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('sii', $birdType, $birdQuantity, $recordId);
 
     } elseif ($recordType === 'feed') {
-        $feedType = $_POST['feedType'];
-        $feedQuantity = $_POST['feedQuantity'];
+        $feedType = $_POST['feedType'] ?? '';
+        $feedQuantity = $_POST['feedQuantity'] ?? null;
 
         $sql = "UPDATE feed SET feed_type = ?, feed_quantity = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('sii', $feedType, $feedQuantity, $recordId);
 
     } elseif ($recordType === 'employee') {
-        $employeeName = $_POST['employeeName'];
-        $employeeRole = $_POST['employeeRole'];
-        $employeeSalary = $_POST['employeeSalary'];
+        $employeeName = $_POST['employeeName'] ?? '';
+        $employeeRole = $_POST['employeeRole'] ?? '';
+        $employeeSalary = $_POST['employeeSalary'] ?? null;
 
         $sql = "UPDATE employees SET employee_name = ?, employee_role = ?, employee_salary = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('ssii', $employeeName, $employeeRole, $employeeSalary, $recordId);
 
     } elseif ($recordType === 'sales') {
-        // Get form data
-        $productName = $_POST['productName'];
-        $quantitySold = $_POST['quantitySold'];
-        $saleDate = $_POST['saleDate'];
-        $totalAmount = $_POST['totalAmount'];
+        $productName = $_POST['productName'] ?? '';
+        $quantitySold = $_POST['quantitySold'] ?? null;
+        $saleDate = $_POST['saleDate'] ?? '';
+        $totalAmount = $_POST['totalAmount'] ?? null;
 
-        // Prepare SQL query to update sales record
         $sql = "UPDATE sales SET product_name = ?, quantity_sold = ?, sale_date = ?, total_amount = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('sisii', $productName, $quantitySold, $saleDate, $totalAmount, $recordId);
+
     } else {
-        $response = "Invalid record type!";
-        echo $response;
+        echo json_encode(['status' => 'error', 'message' => 'Invalid record type!']);
         exit;
     }
 
     if ($stmt->execute()) {
-        $response = "Record updated successfully!";
+        $response = ['status' => 'success', 'message' => 'Record updated successfully!'];
     } else {
-        $response = "Error updating record: " . $conn->error;
+        $response = ['status' => 'error', 'message' => 'Error updating record: ' . $conn->error];
     }
 
     $stmt->close();
     $conn->close();
 
-    echo $response;
+    echo json_encode($response);
+    exit;
 }
 ?>

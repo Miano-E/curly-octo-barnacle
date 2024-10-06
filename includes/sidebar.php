@@ -31,9 +31,11 @@ switch ($current_page) {
 
 <header class="page-header">
     <h1><?php echo $page_heading; ?></h1>
+    <button id="openSidebarBtn" class="toggle-btn">&#9776;</button> <!-- Hamburger menu for opening the sidebar -->
 </header>
 
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
+    <button id="closeSidebarBtn" class="close-btn">&times;</button> <!-- Close icon inside the sidebar -->
     <p class="text-center"><span class="logo">EPMS</span></p>
 
     <ul class="sidebar__menu">
@@ -46,3 +48,23 @@ switch ($current_page) {
         <li><a href="logout.php" class="<?php echo $current_page == 'logout.php' ? 'active' : ''; ?>"><i class="fa fa-power-off"></i>Logout</a></li>
     </ul>
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var sidebar = document.getElementById('sidebar');
+        var openBtn = document.getElementById('openSidebarBtn');
+        var closeBtn = document.getElementById('closeSidebarBtn');
+
+        // Open sidebar
+        openBtn.addEventListener('click', function() {
+            sidebar.classList.add('open');
+        });
+
+        // Close sidebar
+        closeBtn.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+        });
+    });
+
+</script>

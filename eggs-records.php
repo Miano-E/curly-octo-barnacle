@@ -14,18 +14,21 @@
 <!-- <php include 'includes/formal-modal.php'; ?> -->
 
 <div class="container content" data-record-type="eggs">
-    <table id="egg-records-table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Egg Count</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Dynamic rows will be inserted here -->
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table id="egg-records-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Egg Count</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dynamic rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+    
 
     <?php include 'includes/pagination.php'; ?>
 

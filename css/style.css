@@ -26,7 +26,7 @@ h1 {
 }
 
 header {
-    background:rgba(163, 216, 162, 0.9);
+    background: rgba(163, 216, 162, 0.9);
     padding: 1em;
     text-align: center;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -39,18 +39,41 @@ header {
     z-index: 1000;
 }
 
+/* Sidebar styling */
 .sidebar {
     width: 200px;
     height: 100%;
-    padding: 8px 0;
+    padding-block-start: 5em;
     position: fixed;
     z-index: 9999;
     top: 0;
-    left: 0;
     overflow-x: hidden;
-    padding-block-start: 5em;
     background: #4a8a47;
     box-shadow: 1px 0 6px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease; /* Smooth transition */
+}
+
+/* Toggle button (initially hidden on large screens) */
+.toggle-btn {
+    display: none;
+}
+
+/* Close button inside the sidebar */
+.sidebar .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 1.7rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
+    text-shadow: 0 2px 6px #000;
+}
+
+/* Sidebar open state */
+.sidebar.open {
+    left: 0;
 }
 
 .critical-alert {
@@ -65,16 +88,17 @@ header {
 
 p .logo {
     color: var(--secondary-green);
-    margin-bottom: 4em;
-    font-size: 2.1rem;
+    margin-bottom: 3.7em;
+    font-size: 1.8rem;
     font-weight: bold;
+    letter-spacing: 0.01em;
     text-shadow: 2px 2px 5px #000000;
 }
 
 .sidebar__menu {
     list-style-type: none;
     padding: 0;
-    margin-top: 2em;
+    margin-top: 1.8em;
 }
 
 .sidebar__menu li {
@@ -426,9 +450,7 @@ table tr:nth-child(odd) {
     background-color: #fff;
 }
 
-table tr:hover td {
-    background-color: rgba(236, 249, 236, 0.9);
-}
+
 
 
 table td.actions {
@@ -580,40 +602,92 @@ table td.actions {
 
 
 /* Responsive table for mobile devices */
-@media (max-width: 768px) {
-    .sidebar {
-        display: none;
+@media (max-width: 50em) {
+    
+    .toggle-btn {
+        font-size: 24px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        outline: none;
+        display: block;
+        font-weight: bold;
+        z-index: 10000;
+        position: absolute;
+        left: 20px;
+        top: 10px;
     }
+
+    .sidebar {
+        left: -100%;
+    }
+
+    /* Show close button when sidebar is open */
+    .sidebar.open .close-btn {
+        display: block;
+    }
+
+    .page-header h1 {
+        font-size: 1.35rem;
+    }
+    
     .content {
         margin-left: 0;
         width: 100%;
+        padding: 10px;
     } 
 
-    table, th, td {
-        display: block;
+    .container {
         width: 100%;
     }
+
+    .table-container {
+        max-width: 100%;
+        overflow-x: auto;
+        margin: 0 auto;
+        white-space: nowrap
+    }
+
     
-    table tr {
-        margin-bottom: 15px;
+    table {
+        min-width: 500px;
+    }
+
+    table th, td {
+        font-size: .9rem;
+    }
+
+    .modal {
+        margin: 12em auto;
         display: block;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        align-items: flex-start;
+        padding: 1em;
+    }
+
+    /* body.modal-open {
+        overflow: hidden;
+    } */
+
+    .modal-content {
+        min-width: 200px;
+        padding: 1em;
+        background-color: rgba(254, 254, 254, 0.9);
+
+    }
+
+    .modal-content label {
+        font-size: 1rem;
     }
     
-    table th, table td {
-        text-align: right;
-        padding-left: 50%;
-        position: relative;
+    .modal-content input[type="text"],
+    .modal-content input[type="number"],
+    .modal-content input[type="date"] {
+        padding: 5px;
+        font-size: .9rem;
+        width: 97%;
     }
-    
-    table th::before, table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        width: 45%;
-        text-align: left;
-        font-weight: bold;
-        text-transform: uppercase;
+    .modal-content h3 {
+        font-size: 1.24rem;
     }
 }
 

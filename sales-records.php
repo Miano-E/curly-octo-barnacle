@@ -12,21 +12,22 @@
     <?php include 'includes/sidebar.php'; ?>
 
     <div class="container content" data-record-type="sales">
-        <table id="sales-records-table">
-            <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Quantity Sold</th>
-                    <th>Sales Date</th>
-                    <th>Total Amount</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <!-- Records will be populated here -->
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table id="sales-records-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity Sold</th>
+                        <th>Sales Date</th>
+                        <th>Total Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Records will be populated here -->
+                </tbody>
+            </table>
+        </div>
         <?php include 'includes/pagination.php'; ?>
 
         <div class="button-container">

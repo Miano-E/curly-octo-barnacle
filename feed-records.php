@@ -13,19 +13,21 @@
     <!-- <php include 'includes/form-modal.php'; ?> -->
 
     <div class="container content" data-record-type="feed">        
-        <table id = "feeds-records-table">
-            <thead>
-                <tr>
-                    <th>Consumed Date</th>
-                    <th>Feed Consumed</th>
-                    <th>Feed Usage</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table id = "feeds-records-table">
+                <thead>
+                    <tr>
+                        <th>Consumed Date</th>
+                        <th>Feed Consumed</th>
+                        <th>Feed Usage</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+            
+                </tbody>
+            </table>
+        </div>
         <?php include 'includes/pagination.php'; ?>
 
         <div class="button-container">

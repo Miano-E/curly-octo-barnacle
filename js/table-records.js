@@ -51,13 +51,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const startIndex = (page - 1) * recordsPerPage;
         const endIndex = startIndex + recordsPerPage;
         const recordsToDisplay = recordsData.slice(startIndex, endIndex);
-
+        
         // Clear the table before rendering
         tableBody.innerHTML = '';
-
+        
         // Render the rows
         recordsToDisplay.forEach(record => {
             const row = tableBody.insertRow(-1);
+            row.setAttribute('data-id', record.id); // Attach the record's ID to the row
 
             if (recordType === 'eggs') {
                 row.insertCell(0).textContent = record.date;
@@ -87,22 +88,20 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add Edit/Delete actions
             const actionsCell = row.insertCell(-1);
             actionsCell.innerHTML = `
-                <a href="#" class="edit-record" data-id="${record.id}">
+                <a href="#" class="edit-record" data-id="${record.id}" onclick="editRow(this, '${recordType}')">
                     <i class="fas fa-edit"></i> Edit
                 </a>
-                <a href="#" class="delete-record" data-id="${record.id}" data-type="${recordType}">
+                <a href="#" class="delete-record" data-id="${record.id}" data-type="${recordType}" onclick="deleteRow(this)">
                     <i class="fas fa-trash-alt"></i> Delete
                 </a>
             `;
         });
 
-        // Re-attach event listeners after rendering
-        addEditEventListeners();
         addDeleteEventListeners();
 
-        // Update pagination controls
         updatePaginationControls();
     }
+
 
     // Update pagination controls and page info
     function updatePaginationControls() {
@@ -126,46 +125,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Add edit event listeners
-    function addEditEventListeners() {
-        document.querySelectorAll('.edit-record').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const id = this.getAttribute('data-id'); // Get the ID from the clicked link
-
-                // Find the specific record in the recordsData array using the ID
-                const record = recordsData.find(r => r.id === id);
-
-                if (record) {
-                    // Open the form modal and pre-fill it with the record data
-                    openForm(record);
-                } else {
-                    console.error('Record not found with ID:', id);
-                }
-            });
-        });
-    }
-
-
     // Add delete event listeners
     function addDeleteEventListeners() {
         document.querySelectorAll('.delete-record').forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
                 const id = this.getAttribute('data-id');
-                const recordType = this.getAttribute('data-type'); // Get the record type from the button
+                const recordType = this.getAttribute('data-type');
     
                 // Show confirmation dialog before deleting
                 if (confirm('Are you sure you want to delete this record?')) {
-                    console.log('Deleting record with ID:', id);
-                    deleteRecord(id, recordType); // Call deleteRecord with the ID and type
-                } else {
-                    console.log('Deletion canceled');
+                    deleteRecord(id, recordType);
                 }
             });
         });
     }
-    
 
     // Function to handle record deletion logic
     function deleteRecord(recordId, recordType) {
@@ -187,21 +161,440 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 console.log(`Record with ID ${recordId} deleted successfully`);
             } else {
-                console.error('Error deleting the record from the database');
                 alert('Failed to delete the record. Please try again.');
             }
         })
         .catch(error => {
-            console.error('Error during record deletion:', error);
             alert('An error occurred while deleting the record.');
         });
     }
-    
-
 
     // Fetch records on page load
     fetchRecords();
 });
+
+// Function to make a row editable
+function editRow(editButton, recordType) {
+    const row = editButton.closest('tr');
+    row.classList.add('edit-mode');
+
+    // Get the original data from the row's cells
+    const cells = row.querySelectorAll('td');
+    let originalData = Array.from(cells).map(cell => cell.textContent);
+
+    // Convert the fields to editable inputs
+    if (recordType === 'eggs') {
+        cells[0].innerHTML = `<input type="date" class="egg-date-input" value="${originalData[0]}">`;
+        cells[1].innerHTML = `<input type="number" class="egg-count-input" value="${parseInt(originalData[1])}">`;
+    } else if (recordType === 'birds') {
+        cells[0].innerHTML = `<input type="text" class="bird-type-input" value="${originalData[0]}">`;
+        cells[1].innerHTML = `<input type="number" class="bird-quantity-input" value="${parseInt(originalData[1])}">`;
+    } else if (recordType === 'feed') {
+        cells[0].innerHTML = `<input type="date" class="feed-date-input" value="${originalData[0]}">`;
+        cells[1].innerHTML = `<input type="text" class="feed-type-input" value="${originalData[1]}">`;
+        cells[2].innerHTML = `<input type="number" class="feed-quantity-input" value="${parseInt(originalData[2])}">`;
+    } else if (recordType === 'sales') {
+        cells[0].innerHTML = `<input type="text" class="product-name-input" value="${originalData[0]}">`;
+        cells[1].innerHTML = `<input type="number" class="quantity-sold-input" value="${parseInt(originalData[1])}">`;
+        cells[2].innerHTML = `<input type="date" class="sale-date-input" value="${originalData[2]}">`;
+        cells[3].innerHTML = `<input type="number" class="total-amount-input" value="${parseInt(originalData[3].replace(/\D/g, ''))}">`;
+    } else if (recordType === 'employee') {
+        cells[0].innerHTML = `<input type="text" class="employee-name-input" value="${originalData[0]}">`;
+        cells[1].innerHTML = `<input type="text" class="employee-role-input" value="${originalData[1]}">`;
+        cells[2].innerHTML = `<input type="number" class="employee-salary-input" value="${parseInt(originalData[2].replace(/\D/g, ''))}">`;
+    }
+
+    // Add Save and Cancel buttons
+    const actionsCell = row.querySelector('td:last-child');
+    actionsCell.innerHTML = `
+        <a href="#" class="save-record" onclick="saveRow(this, '${recordType}')">
+            <i class="fas fa-save"></i> Save
+        </a>
+        <a href="#" class="cancel-edit" data-original='${JSON.stringify(originalData)}' onclick="cancelEdit(this, '${recordType}')">
+            <i class="fas fa-times"></i> Cancel
+        </a>
+    `;
+}
+
+function displayMessage(message, type) {
+    const messageBox = document.createElement('div');
+    messageBox.className = `message-box ${type}`;  // 'type' can be 'success' or 'error'
+    messageBox.innerHTML = `${message} <span class="close-btn">&times;</span>`;
+    
+    document.body.appendChild(messageBox);
+    
+    // Add event listener to close the message box when the close button is clicked
+    const closeBtn = messageBox.querySelector('.close-btn');
+    closeBtn.addEventListener('click', () => {
+        messageBox.remove();
+    });
+
+    // Automatically remove the message after 5 seconds
+    setTimeout(() => {
+        messageBox.remove();
+    }, 5000);
+}
+
+function saveRow(saveButton, recordType) {
+    const row = saveButton.closest('tr');
+    const recordId = row.getAttribute('data-id'); // Fetch the record ID
+    const cells = row.querySelectorAll('td');
+
+    // Prepare an object to store the updated data
+    let updatedData = { id: recordId, recordType: recordType };
+
+    // Collect the updated values based on the record type
+    if (recordType === 'eggs') {
+        updatedData.eggDate = cells[0].querySelector('input').value;
+        updatedData.eggCount = cells[1].querySelector('input').value;
+    } else if (recordType === 'birds') {
+        updatedData.birdType = cells[0].querySelector('input').value;
+        updatedData.birdQuantity = cells[1].querySelector('input').value;
+    } else if (recordType === 'feed') {
+        updatedData.feedDate = cells[0].querySelector('input').value;
+        updatedData.feedType = cells[1].querySelector('input').value;
+        updatedData.feedQuantity = cells[2].querySelector('input').value;
+    } else if (recordType === 'sales') {
+        updatedData.productName = cells[0].querySelector('input').value;
+        updatedData.quantitySold = cells[1].querySelector('input').value;
+        updatedData.saleDate = cells[2].querySelector('input').value;
+        updatedData.totalAmount = cells[3].querySelector('input').value;
+    } else if (recordType === 'employee') {
+        updatedData.employeeName = cells[0].querySelector('input').value;
+        updatedData.employeeRole = cells[1].querySelector('input').value;
+        updatedData.employeeSalary = cells[2].querySelector('input').value;
+    }
+
+    // Send the updated data to the server via AJAX
+    fetch('./includes/update_record.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(updatedData).toString()
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // If the update was successful, update the table row with the new data
+            if (recordType === 'eggs') {
+                cells[0].textContent = updatedData.eggDate;
+                cells[1].textContent = `${updatedData.eggCount} Eggs`;
+            } else if (recordType === 'birds') {
+                cells[0].textContent = updatedData.birdType;
+                cells[1].textContent = `${updatedData.birdQuantity} Birds`;
+            } else if (recordType === 'feed') {
+                cells[0].textContent = updatedData.feedDate;
+                cells[1].textContent = updatedData.feedType;
+                cells[2].textContent = `${updatedData.feedQuantity} Kgs`;
+            } else if (recordType === 'sales') {
+                cells[0].textContent = updatedData.productName;
+                cells[1].textContent = updatedData.quantitySold;
+                cells[2].textContent = updatedData.saleDate;
+                const formattedTotalAmount = Number(updatedData.totalAmount).toLocaleString();
+                cells[3].textContent = `${formattedTotalAmount} Ksh`;
+            } else if (recordType === 'employee') {
+                cells[0].textContent = updatedData.employeeName;
+                cells[1].textContent = updatedData.employeeRole;
+                const formattedSalary = Number(updatedData.employeeSalary).toLocaleString();
+                cells[2].textContent = `${formattedSalary} Ksh`;
+            }
+
+            // Restore the original Edit/Delete buttons
+            const actionsCell = row.querySelector('td:last-child');
+            actionsCell.innerHTML = `
+                <a href="#" class="edit-record" onclick="editRow(this, '${recordType}')">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a href="#" class="delete-record" onclick="deleteRow(this)">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </a>
+            `;
+
+            // Show success message using displayMessage
+            displayMessage('Record updated successfully.', 'success');
+            row.classList.remove('edit-mode');
+        } else {
+            // Show error message using displayMessage
+            displayMessage('Failed to update the record. Please try again.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error occurred while sending request:', error);  // Log fetch errors
+        displayMessage('An error occurred while saving the record.', 'error');
+    });
+}
+
+
+// Function to save the edited row
+// function saveRow(saveButton, recordType) {
+//     const row = saveButton.closest('tr');
+//     const recordId = row.getAttribute('data-id'); // Fetch the record ID
+//     const cells = row.querySelectorAll('td');
+
+//     // Prepare an object to store the updated data
+//     let updatedData = { id: recordId, recordType: recordType };
+
+//     // Collect the updated values based on the record type
+//     if (recordType === 'eggs') {
+//         updatedData.eggDate = cells[0].querySelector('input').value;
+//         updatedData.eggCount = cells[1].querySelector('input').value;
+//     } else if (recordType === 'birds') {
+//         updatedData.birdType = cells[0].querySelector('input').value;
+//         updatedData.birdQuantity = cells[1].querySelector('input').value;
+//     } else if (recordType === 'feed') {
+//         updatedData.feedDate = cells[0].querySelector('input').value;
+//         updatedData.feedType = cells[1].querySelector('input').value;
+//         updatedData.feedQuantity = cells[2].querySelector('input').value;
+//     } else if (recordType === 'sales') {
+//         updatedData.productName = cells[0].querySelector('input').value;
+//         updatedData.quantitySold = cells[1].querySelector('input').value;
+//         updatedData.saleDate = cells[2].querySelector('input').value;
+//         updatedData.totalAmount = cells[3].querySelector('input').value;
+//     } else if (recordType === 'employee') {
+//         updatedData.employeeName = cells[0].querySelector('input').value;
+//         updatedData.employeeRole = cells[1].querySelector('input').value;
+//         updatedData.employeeSalary = cells[2].querySelector('input').value;
+//     }
+
+//     console.log('Updated data being sent:', updatedData);  // Log the data being sent
+
+//     // Send the updated data to the server via AJAX
+//     fetch('./includes/update_record.php', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/x-www-form-urlencoded',
+//         },
+//         body: new URLSearchParams(updatedData).toString()
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         console.log('Raw response from server:', data);  // Log the server response
+
+//         if (data.status === 'success') {
+//             // If the update was successful, update the table row with the new data
+//             if (recordType === 'eggs') {
+//                 cells[0].textContent = updatedData.eggDate;
+//                 cells[1].textContent = `${updatedData.eggCount} Eggs`;
+//             } else if (recordType === 'birds') {
+//                 cells[0].textContent = updatedData.birdType;
+//                 cells[1].textContent = `${updatedData.birdQuantity} Birds`;
+//             } else if (recordType === 'feed') {
+//                 cells[0].textContent = updatedData.feedDate;
+//                 cells[1].textContent = updatedData.feedType;
+//                 cells[2].textContent = `${updatedData.feedQuantity} Kgs`;
+//             } else if (recordType === 'sales') {
+//                 cells[0].textContent = updatedData.productName;
+//                 cells[1].textContent = updatedData.quantitySold;
+//                 cells[2].textContent = updatedData.saleDate;
+
+//                 const formattedTotalAmount = Number(updatedData.totalAmount).toLocaleString();
+//                 cells[3].textContent = `${formattedTotalAmount} Ksh`;
+//             } else if (recordType === 'employee') {
+//                 cells[0].textContent = updatedData.employeeName;
+//                 cells[1].textContent = updatedData.employeeRole;
+
+//                 const formattedSalary = Number(updatedData.employeeSalary).toLocaleString();
+//                 cells[2].textContent = `${formattedSalary} Ksh`;
+//             }
+
+//             // Restore the original Edit/Delete buttons
+//             const actionsCell = row.querySelector('td:last-child');
+//             actionsCell.innerHTML = `
+//                 <a href="#" class="edit-record" onclick="editRow(this, '${recordType}')">
+//                     <i class="fas fa-edit"></i> Edit
+//                 </a>
+//                 <a href="#" class="delete-record" onclick="deleteRow(this)">
+//                     <i class="fas fa-trash-alt"></i> Delete
+//                 </a>
+//             `;
+
+//             alert('Record updated successfully.');
+//             row.classList.remove('edit-mode');
+
+//         } else {
+//             console.error('Error updating record:', data.message);  // Log the error message
+//             alert('Failed to update the record. Please try again.');
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error occurred while sending request:', error);  // Log fetch errors
+//         alert('An error occurred while saving the record.');
+//     });
+// }
+
+
+
+// Cancel the edit and restore the original data
+function cancelEdit(cancelButton, recordType) {
+    const originalData = JSON.parse(cancelButton.getAttribute('data-original')); // Retrieve the original data
+    const row = cancelButton.closest('tr');
+    const cells = row.querySelectorAll('td');
+    row.classList.remove('edit-mode');
+
+
+    // Revert the fields back to their original values
+    if (recordType === 'eggs') {
+        cells[0].textContent = originalData[0];
+        cells[1].textContent = originalData[1];
+    } else if (recordType === 'birds') {
+        cells[0].textContent = originalData[0];
+        cells[1].textContent = originalData[1];
+    } else if (recordType === 'feed') {
+        cells[0].textContent = originalData[0];
+        cells[1].textContent = originalData[1];
+        cells[2].textContent = originalData[2];
+    } else if (recordType === 'sales') {
+        cells[0].textContent = originalData[0];
+        cells[1].textContent = originalData[1];
+        cells[2].textContent = originalData[2];
+        cells[3].textContent = originalData[3];
+    } else if (recordType === 'employee') {
+        cells[0].textContent = originalData[0];
+        cells[1].textContent = originalData[1];
+        cells[2].textContent = originalData[2];
+    }
+
+    // Restore the original Edit/Delete buttons
+    const actionsCell = row.querySelector('td:last-child');
+    actionsCell.innerHTML = `
+        <a href="#" class="edit-record" onclick="editRow(this, '${recordType}')">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+        <a href="#" class="delete-record" onclick="deleteRow(this)">
+            <i class="fas fa-trash-alt"></i> Delete
+        </a>
+    `;
+}
+
+
+// // Save the edited row
+// function saveRow(saveButton, recordType) {
+//     const row = saveButton.closest('tr');
+//     const recordId = row.getAttribute('data-id'); // Get the ID from the row
+
+//     // Ensure the recordId is properly retrieved
+//     if (!recordId) {
+//         console.error('Record ID not found in the row.');
+//         alert('Record ID is missing. Please refresh the page and try again.');
+//         return;
+//     }
+
+//     // Collect updated data from the inputs
+//     let updatedData = {};
+    
+//     if (recordType === 'eggs') {
+//         updatedData = {
+//             eggDate: row.querySelector('.egg-date-input').value,
+//             eggCount: row.querySelector('.egg-count-input').value
+//         };
+//     } else if (recordType === 'birds') {
+//         updatedData = {
+//             birdType: row.querySelector('.bird-type-input').value,
+//             birdQuantity: row.querySelector('.bird-quantity-input').value
+//         };
+//     } else if (recordType === 'feed') {
+//         updatedData = {
+//             feedDate: row.querySelector('.feed-date-input').value,
+//             feedType: row.querySelector('.feed-type-input').value,
+//             feedQuantity: row.querySelector('.feed-quantity-input').value
+//         };
+//     } else if (recordType === 'sales') {
+//         updatedData = {
+//             productName: row.querySelector('.product-name-input').value,
+//             quantitySold: row.querySelector('.quantity-sold-input').value,
+//             saleDate: row.querySelector('.sale-date-input').value,
+//             totalAmount: row.querySelector('.total-amount-input').value
+//         };
+//     } else if (recordType === 'employee') {
+//         updatedData = {
+//             employeeName: row.querySelector('.employee-name-input').value,
+//             employeeRole: row.querySelector('.employee-role-input').value,
+//             employeeSalary: row.querySelector('.employee-salary-input').value
+//         };
+//     }
+
+//     // Log for debugging
+//     console.log("Record ID:", recordId);
+//     console.log("Updated Data:", updatedData);
+
+//     // Send updated data to the server via AJAX
+//     fetch('./includes/update_record.php', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/x-www-form-urlencoded',
+//         },
+//         body: `id=${recordId}&recordType=${recordType}&${serializeData(updatedData)}` // Serialize the updated data
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.status === 'success') {
+//             console.log('Record updated successfully');
+
+//             // Update the data-original attribute with the new data
+//             const originalDataElement = row.querySelector('[data-original]');
+//             if (originalDataElement) {
+//                 originalDataElement.setAttribute('data-original', JSON.stringify(Object.values(updatedData)));
+//             } else {
+//                 console.error('Element with data-original not found.');
+//             }
+
+//             // Exit the editing mode and reflect the updated data
+//             cancelEdit(saveButton, recordType); // Use the updated data-original
+//         } else {
+//             alert('Failed to save changes. Please try again.');
+//             console.error('Error:', data.message);
+//         }
+//     })
+//     .catch(error => {
+//         console.error('An error occurred:', error);
+//         alert('An error occurred while saving the changes.');
+//     });
+// }
+
+
+
+// // Cancel editing and restore original data
+// function cancelEdit(cancelButton, recordType) {
+//     // Retrieve the original data from the data-original attribute
+//     const originalData = JSON.parse(cancelButton.getAttribute('data-original'));
+//     if (!originalData) {
+//         console.error("Original data is null or not found");
+//         return;
+//     }
+
+//     const row = cancelButton.closest('tr');
+//     const cells = row.querySelectorAll('td');
+
+//     // Revert the fields back to their original values
+//     if (recordType === 'sales') {
+//         cells[0].textContent = originalData[0]; // productName
+//         cells[1].textContent = originalData[1]; // quantitySold
+//         cells[2].textContent = originalData[2]; // saleDate
+//         cells[3].textContent = originalData[3]; // totalAmount
+//     }
+
+//     // Restore the original Edit/Delete buttons
+//     const actionsCell = row.querySelector('td:last-child');
+//     actionsCell.innerHTML = `
+//         <a href="#" class="edit-record" onclick="editRow(this, '${recordType}')">
+//             <i class="fas fa-edit"></i> Edit
+//         </a>
+//         <a href="#" class="delete-record" onclick="deleteRow(this)">
+//             <i class="fas fa-trash-alt"></i> Delete
+//         </a>
+//     `;
+// }
+
+
+
+
+// // Helper function to serialize the data
+// function serializeData(data) {
+//     return Object.keys(data)
+//         .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
+//         .join('&');
+// }
 
 
 

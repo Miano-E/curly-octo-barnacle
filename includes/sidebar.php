@@ -13,13 +13,13 @@ switch ($current_page) {
         $page_heading = 'Birds Records';
         break;
     case 'feed-records.php':
-        $page_heading = 'Feeds Consumption Management';
+        $page_heading = 'Feeds Records';
         break;
     case 'sales-records.php':
         $page_heading = 'Sales Records';
         break;
     case 'employee-records.php':
-        $page_heading = 'Employees Management';
+        $page_heading = 'Employees Records';
         break;
     case 'logout.php':
         $page_heading = 'Logout';

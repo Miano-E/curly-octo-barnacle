@@ -9,20 +9,21 @@
 </head>
 <body>
     <?php include 'includes/sidebar.php'; ?>
- <div class="container content" data-record-type="employee">
-        <table id="employees-records-table">
-            <thead>
-                <tr>
-                    <th>Employee Name</th>
-                    <th>Employee Role</th>
-                    <th>Employee Salary</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
+    <div class="container content" data-record-type="employee">
+        <div class="table-container">
+            <table id="employees-records-table">
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Employee Role</th>
+                        <th>Employee Salary</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
         <?php include 'includes/pagination.php'; ?>
 
         <div class="button-container">

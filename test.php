@@ -33,7 +33,7 @@
 
         /* Table container for overflow handling on smaller screens */
         .table-container {
-            max-width: 100%;
+            max-width: 80%;
             overflow-x: auto;
             margin: 1.5rem auto;
             border-radius: 8px;
@@ -123,11 +123,15 @@
             <tr>
                 <th>Date</th>
                 <th>Egg Count</th>
+                <th>Date</th>
+                <th>Egg Count</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             <tr data-id="1">
+                <td class="date">2024-09-01</td>
+                <td class="egg-count">200</td>
                 <td class="date">2024-09-01</td>
                 <td class="egg-count">200</td>
                 <td class="actions">
@@ -139,6 +143,8 @@
             <tr data-id="2">
                 <td class="date">2024-09-01</td>
                 <td class="egg-count">200</td>
+                <td class="date">2024-09-01</td>
+                <td class="egg-count">200</td>
                 <td class="actions">
                     <button class="edit-record" onclick="editRow(this)">Edit</button>
                     <button class="delete-record" onclick="deleteRow(this)">Delete</button>
@@ -146,6 +152,8 @@
             </tr>
     
             <tr data-id="3">
+                <td class="date">2024-09-01</td>
+                <td class="egg-count">200</td>
                 <td class="date">2024-09-01</td>
                 <td class="egg-count">200</td>
                 <td class="actions">
@@ -157,6 +165,8 @@
             <tr data-id="4">
                 <td class="date">2024-09-01</td>
                 <td class="egg-count">200</td>
+                <td class="date">2024-09-01</td>
+                <td class="egg-count">200</td>
                 <td class="actions">
                     <button class="edit-record" onclick="editRow(this)">Edit</button>
                     <button class="delete-record" onclick="deleteRow(this)">Delete</button>
@@ -164,6 +174,8 @@
             </tr>
     
             <tr data-id="5">
+                <td class="date">2024-09-01</td>
+                <td class="egg-count">200</td>
                 <td class="date">2024-09-01</td>
                 <td class="egg-count">200</td>
                 <td class="actions">
@@ -176,7 +188,6 @@
 </div>
 
 <script>
-
 function editRow(button) {
     // Remove the 'editing' class from any currently edited row
     const allRows = document.querySelectorAll('#egg-records-table tbody tr');
@@ -199,6 +210,12 @@ function editRow(button) {
     // Change the edit button to a save button
     button.textContent = 'Save';
     button.onclick = function () { saveRow(this); };
+
+    // Hide the delete button
+    var deleteButton = row.querySelector('.delete-record');
+    if (deleteButton) {
+        deleteButton.style.display = 'none';
+    }
 
     // Add a cancel button if it doesn't already exist
     var cancelButton = row.querySelector('.cancel-edit');
@@ -229,6 +246,12 @@ function saveRow(button) {
     button.textContent = 'Edit';
     button.onclick = function () { editRow(this); };
 
+    // Show the delete button again
+    var deleteButton = row.querySelector('.delete-record');
+    if (deleteButton) {
+        deleteButton.style.display = 'inline-block';
+    }
+
     // Remove the cancel button
     var cancelButton = row.querySelector('.cancel-edit');
     if (cancelButton) {
@@ -252,6 +275,12 @@ function cancelEdit(row, editButton) {
     // Change the save button back to the edit button
     editButton.textContent = 'Edit';
     editButton.onclick = function () { editRow(editButton); };
+
+    // Show the delete button again
+    var deleteButton = row.querySelector('.delete-record');
+    if (deleteButton) {
+        deleteButton.style.display = 'inline-block';
+    }
 
     // Remove the cancel button
     var cancelButton = row.querySelector('.cancel-edit');

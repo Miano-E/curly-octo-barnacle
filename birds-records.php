@@ -13,18 +13,20 @@
 <?php include 'includes/sidebar.php'; ?>
 
 <div class="container content" data-record-type="birds">    
-    <table id="bird-records-table">
-        <thead>
-            <tr>
-                <th>Type of Bird</th>
-                <th>Flock Size</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- The rows will be dynamically inserted here via JavaScript -->
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table id="bird-records-table">
+            <thead>
+                <tr>
+                    <th>Type of Bird</th>
+                    <th>Flock Size</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- The rows will be dynamically inserted here via JavaScript -->
+            </tbody>
+        </table>
+    </div>
     <?php include 'includes/pagination.php'; ?>
 
     <div class="button-container">

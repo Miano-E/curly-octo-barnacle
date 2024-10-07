@@ -148,7 +148,7 @@ p .logo {
 .top-section {
     display: grid;
     gap: 1rem; 
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     justify-content: space-between;
 }
 
@@ -157,7 +157,7 @@ p .logo {
     color: #fff;
     border-radius: var(--card-radius);
     text-align: center;
-    padding: .5rem;
+    padding: .3rem;
     margin-block: 1em;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -179,16 +179,16 @@ p .logo {
 }
 
 .stat h3 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-top: 0;
-    margin-bottom: 7px;
+    margin-bottom: 4px;
     font-weight: normal;
 }
 
 .stat p {
     margin: 0;
     padding: 0;
-    font-size: 1.15rem;
+    font-size: 1rem;
 }
 
 .stat:hover {
@@ -450,6 +450,39 @@ table tr:nth-child(odd) {
     background-color: #fff;
 }
 
+/* Style to indicate that a row is in edit mode */
+/* Style to indicate that a row is in edit mode */
+table tr.edit-mode:nth-child(odd) {
+    background-color: #e6f4ea; /* Light green for odd rows */
+    border-left: 2px solid #4a8a47; /* Green border for clarity */
+    transition: background-color 0.3s ease, border-left 0.3s ease;
+}
+
+table tr.edit-mode:nth-child(even) {
+    background-color: rgb(237, 247, 255); /* Light blue for even rows */
+    border-left: 2px solid rgb(12, 140, 253); /* Same border for consistency */
+    transition: background-color 0.3s ease, border-left 0.3s ease;
+}
+
+/* Adjust input field styles within the editable row */
+table tr.edit-mode td input {
+    border: 1px solid #4a8a47;
+    padding: 4px;
+    width: 88%;
+    font-size: 1rem;
+    font-family: inherit;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Style when input fields are focused */
+table tr.edit-mode td input:focus {
+    border-color: #71c17d;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
 
 
 
@@ -462,6 +495,7 @@ table td.actions {
 }
 
 /* Style for action links */
+.save-record, .cancel-edit,
 .edit-record, .delete-record {
     color: #fff;
     text-decoration: none;
@@ -477,17 +511,19 @@ table td.actions {
     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.9); 
 }
 
+.cancel-edit,
 .delete-record {
     margin-top: .2em;
     color: #fadcd9;
     background-color: #bc6363;
 }
 
+
 .edit-record:hover, .delete-record:hover {
     opacity: .8;
-
 }
 
+.save-record i, .cancel-edit i,
 .edit-record i, .delete-record i {
     margin-right: 6px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
@@ -555,30 +591,30 @@ table td.actions {
     top: 16%;
     left: 50%;
     transform: translate(-50%, 0);
-    padding-block: 10px;
+    padding-block: 11px;
     padding-inline-start: 1.5em;
-    padding-inline-end: 2em;
+    padding-inline-end: 2.2em;
     border-radius: 10px;
-    font-size: 1rem;
+    font-size: 1.1rem;
     text-shadow: 2px 2px 5px #000000;
     color: #fff;
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 1100; 
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);    
     max-width: 300px;
     text-align: center;
+    transition: all 0.3s ease;
 }
 
 
 .message-box.success {
-    background-color: #65b25b;
-    box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.7);
-
+    background-color: #4CAF50;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
 .message-box.error {
     color: #feecea;
-    background-color: #bc6363;
+    background-color: #e74c3c;
 }
 
 
@@ -587,11 +623,12 @@ table td.actions {
     top: 8px;
     right: 10px;
     cursor: pointer;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 1.25rem;
     color: #fff;
+    background-color: rgba(255, 255, 255, 0.3);
     background: none;
     border: none;
+    transition: background-color 0.3s ease;
 }
 
 .close-btn:hover {
@@ -616,6 +653,7 @@ table td.actions {
         position: absolute;
         left: 20px;
         top: 10px;
+        
     }
 
     .sidebar {

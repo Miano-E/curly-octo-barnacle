@@ -134,36 +134,38 @@ $birdThreshold = 250;
 </div>
 
 
-<div class="container">
-    <div class="bottom-section">
-        <div class="record-type-section">
-            <label for="record-type" class="record-type-label">Select Record Type</label>
-            <select id="record-type">
-                <option value="eggs">Eggs</option>
-                <option value="birds">Birds</option>
-                <option value="feed">Feeds</option>
-                <option value="sales">Sales</option>
-                <option value="employee">Employees</option>
-            </select>
-            <button class="button-primary" onclick="openForm()">Add New Records</button>
-
-        </div>
-
-        <div class="view-type-section">
-            <label for="view-type" class="view-type-label">View Records</label>
-            <select id="view-type">
-                <option value="eggs">Eggs</option>
-                <option value="birds">Birds</option>
-                <option value="feed">Feeds</option>
-                <option value="sales">Sales</option>
-                <option value="employee">Employees</option>
-            </select>
-            <button class="button-primary" onclick="viewRecords()">View Records</button>
-        </div>
-    </div>
+<section class="bottom_section">
+    <div class="container">
+        <div class="bottom-section">
+            <div class="record-type-section">
+                <label for="record-type" class="record-type-label">Select Record Type</label>
+                <select id="record-type">
+                    <option value="eggs">Eggs</option>
+                    <option value="birds">Birds</option>
+                    <option value="feed">Feeds</option>
+                    <option value="sales">Sales</option>
+                    <option value="employee">Employees</option>
+                </select>
+                <button class="button-primary" onclick="openForm()">Add New Records</button>
     
-    <?php include 'includes/modal.php'; ?>
-</div>
+            </div>
+    
+            <div class="view-type-section">
+                <label for="view-type" class="view-type-label">View Records</label>
+                <select id="view-type">
+                    <option value="eggs">Eggs</option>
+                    <option value="birds">Birds</option>
+                    <option value="feed">Feeds</option>
+                    <option value="sales">Sales</option>
+                    <option value="employee">Employees</option>
+                </select>
+                <button class="button-primary" onclick="viewRecords()">View Records</button>
+            </div>
+        </div>
+    
+        <?php include 'includes/modal.php'; ?>
+    </div>
+</section>
 
     <script src="js/script.js"></script>
     <script src="js/records.js"></script>

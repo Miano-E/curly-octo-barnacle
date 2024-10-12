@@ -207,7 +207,6 @@ google.charts.load("current", { packages: ["corechart"] });
 google.charts.setOnLoadCallback(fetchAndDrawChart);
 
 function fetchAndDrawChart() {
-    // Fetch data from the backend
     fetch('/EPMS/includes/fetch_records.php?type=employee_roles')
         .then(response => {
             if (!response.ok) {
@@ -216,47 +215,41 @@ function fetchAndDrawChart() {
             return response.json();
         })
         .then(data => {
-
             if (data.length === 0) {
                 console.error('No data found');
                 return;
             }
 
-            // Map the data to format compatible with Google Charts
             const chartDataArray = [['Role', 'Salary']];
             data.forEach(record => {
                 chartDataArray.push([record.employee_role, parseFloat(record.employee_salary)]);
             });
 
-            // Convert array to DataTable format required by Google Charts
             const chartData = google.visualization.arrayToDataTable(chartDataArray);
 
-            // Set chart options
+            // Get the screen width to adjust the legend position
+            const screenWidth = window.innerWidth;
+            const legendPosition = screenWidth < 600 ? 'bottom' : 'right';
+
             const options = {
                 is3D: true,
-                colors: [
-                    '#66bb6a',
-                    '#ffa726', 
-                    '#42a5f5',  
-                    '#ab47bc',  
-                    '#ef5350', 
-                    '#ffeb3b', 
-                    '#8d6e63', 
-                    '#26c6da', 
-                    '#d4e157', 
-                    '#B0C4DE' 
-                ],
+                colors: ['#66bb6a', '#ffa726', '#42a5f5', '#ab47bc', '#ef5350', '#FF6F61', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#00BCD4', '#009688', '#4CAF50'],
                 fontSize: 12,
                 chartArea: {
-                    width: '90%', 
-                    height: '80%'  
+                    width: '90%',
+                    height: '80%',
                 },
-                legend: { position: 'right' }
+                legend: { position: legendPosition }
             };
 
-            // Draw the pie chart
             const chart = new google.visualization.PieChart(document.getElementById('employeeRolesChart'));
             chart.draw(chartData, options);
+
+            // Redraw the chart when the window is resized
+            window.addEventListener('resize', () => {
+                const newLegendPosition = window.innerWidth < 800 ? 'bottom' : 'right';
+                chart.draw(chartData, { ...options, legend: { position: newLegendPosition } });
+            });
         })
         .catch(error => {
             console.error('Fetch error:', error);

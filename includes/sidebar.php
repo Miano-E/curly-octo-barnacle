@@ -1,4 +1,5 @@
 <?php
+session_start();
 $current_page = basename($_SERVER['PHP_SELF']);
 $page_heading = '';
 
@@ -27,15 +28,42 @@ switch ($current_page) {
     default:
         $page_heading = 'EPMS';
 }
+
+$user_logged_in = false; // Initialize as false
+$first_letter = ''; // To store first letter of the username
+
+if (isset($_SESSION['username'])) {
+    $user_logged_in = true;
+    $first_letter = strtoupper($_SESSION['username'][0]); // Get first letter of username
+}
 ?>
 
 <header class="page-header">
     <h1><?php echo $page_heading; ?></h1>
-    <button id="openSidebarBtn" class="toggle-btn">&#9776;</button> <!-- Hamburger menu for opening the sidebar -->
+
+    <div class="user-status">
+        <?php if ($user_logged_in): ?>
+            <div class="user-icon" id="userIcon" style="background-color: <?php echo $_SESSION['color']; ?>;">
+                <span class="user-letter" style="color: #fff;"><?php echo $first_letter; ?></span>
+                <div class="tooltip">
+                    <?php echo htmlspecialchars($_SESSION['username']); ?>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <button id="openSidebarBtn" class="toggle-btn">&#9776;</button>
 </header>
 
+<!-- <div class="user-icon">
+    <span class="user-letter">D</span>
+    <div class="tooltip">Test Tooltip</div>
+</div> -->
+
+
+
 <div class="sidebar" id="sidebar">
-    <button id="closeSidebarBtn" class="close-btn">&times;</button> <!-- Close icon inside the sidebar -->
+    <button id="closeSidebarBtn" class="close-btn">&times;</button>
     <p class="text-center"><span class="logo">EPMS</span></p>
 
     <ul class="sidebar__menu">

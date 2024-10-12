@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 :root {
     --primary-green: #66b25c;
     --secondary-green: #A3D8A2;
@@ -10,8 +12,8 @@ body {
     background-color: var(--light-gray);
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
-    font-size:80%;
+    font-family: "Open Sans", sans-serif;
+    font-size: 80%;
 }
 
 h1 {
@@ -20,15 +22,15 @@ h1 {
 }
 
 .container {
-    width: 70%;
-    margin-inline: auto;
+    width: 100%; 
     max-width: 1260px;
+    margin-inline: auto;
+    padding: 0 15px
 }
 
 header {
     background: rgba(163, 216, 162, 0.9);
     padding: 1em;
-    text-align: center;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     color: #000;
     margin: 0;
@@ -37,6 +39,69 @@ header {
     left: 0;
     width: 100%;
     z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.page-header h1 {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.user-status {
+    position: absolute;
+    right: 4em;
+}
+
+/* Base styling for user icon */
+.user-icon {
+    position: relative;
+    background-color: #fff;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+.tooltip {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    font-size: 0.9em;
+    z-index: 100; 
+}
+
+.user-icon:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Tooltip arrow pointing to the right (towards the icon) */
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.7) transparent transparent transparent; /* Arrow color */
 }
 
 /* Sidebar styling */
@@ -50,7 +115,7 @@ header {
     overflow-x: hidden;
     background: #4a8a47;
     box-shadow: 1px 0 6px rgba(0, 0, 0, 0.1);
-    transition: left 0.3s ease; /* Smooth transition */
+    transition: left 0.3s ease;
 }
 
 /* Toggle button (initially hidden on large screens) */
@@ -58,7 +123,6 @@ header {
     display: none;
 }
 
-/* Close button inside the sidebar */
 .sidebar .close-btn {
     position: absolute;
     top: 12px;
@@ -74,11 +138,6 @@ header {
 /* Sidebar open state */
 .sidebar.open {
     left: 0;
-}
-
-.critical-alert {
-    background-color: #F08080;
-    color: #fff;
 }
 
 
@@ -141,8 +200,9 @@ p .logo {
 .content {
     margin-left: 17.5em;
     padding: 10px 15px;
-    width: calc(95% - 17.5em);
+    width: calc(100% - 17.5em);
     margin-top: 4em;
+    box-sizing: border-box;
 }
 
 .top-section {
@@ -159,7 +219,7 @@ p .logo {
     text-align: center;
     padding: .3rem;
     margin-block: 1em;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9); 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -181,7 +241,7 @@ p .logo {
 .stat h3 {
     font-size: 1.1rem;
     margin-top: 0;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     font-weight: normal;
 }
 
@@ -197,13 +257,13 @@ p .logo {
 
 /* Main Section Styles */
 .main-section {
-    padding: .7rem;
+    margin-inline: auto;
 }
 
 .chart-section {
     display: grid;
-    gap: 2rem;
-    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     padding: 1rem;
 }
 
@@ -213,7 +273,7 @@ p .logo {
     padding: 1.5em 1.2em;
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    min-width: 300px;
+    min-width: 100px;
     margin-bottom: 1.5em;
 }
 
@@ -236,9 +296,10 @@ p .logo {
 /* Bottom Section Styles */
 .container .bottom-section {
     display: flex;
+    flex-direction: row;
     gap: 2em;
     margin-block-start: 0;
-    margin-inline-start: 6.5em;
+    margin-inline-start: 21em;
 }
 
 .view-type-section,
@@ -297,26 +358,31 @@ p .logo {
 .modal {
     display: none;
     position: fixed;
-    z-index: 999;    
+    z-index: 9999;    
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(255, 255, 255, 0.4);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 
 .modal-content {
     background-color: #fefefe;
     padding: 2em;
-    border-radius: 10px;
-    width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    top: 10px;
+    width: 340px;
+    box-shadow: 1.5px 2px 5px rgba(0, 0, 0, 0.3);
     position: relative;
     text-align: left;
+    overflow-y: auto;
 }
 
 
@@ -337,7 +403,6 @@ p .logo {
 .modal-content input[type="date"] {
     width: 100%;
     padding: 7px;
-    display: inline-block;
     border: 1px solid var(--dark-green);
     border-radius: 7px;
     box-sizing: border-box;
@@ -366,6 +431,7 @@ p .logo {
     border-radius: 8px;
     cursor: pointer;
     margin-top: 3px;
+    align-self: center;
     text-shadow: 2px 2px 4px #000000;
     transition: background-color 0.3s ease;
 }
@@ -379,8 +445,6 @@ p .logo {
     flex-direction: column;
 }
 
-
-
 .modal-content h3 {
     font-size: 1.45rem;
     font-family: georgia, serif;
@@ -388,6 +452,7 @@ p .logo {
     font-weight: bold;
     color: #000;
     text-align: center;
+    word-wrap: break-word;
 }
 
 .close {
@@ -396,11 +461,13 @@ p .logo {
     right: 22px;
     font-size: 2.3rem;
     cursor: pointer;
+    line-height: 1; 
 }
 
 .blur {
-    filter: blur(5px);
-    pointer-events: none
+    background-color: rgba(255, 255, 255, 0.4);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
 }
 
 
@@ -441,7 +508,6 @@ table td {
     transition: background-color 0.3s ease;
 }
 
-/* Alternating row colors for readability */
 table tr:nth-child(even) {
     background-color: #f3f3f3;
 }
@@ -451,20 +517,18 @@ table tr:nth-child(odd) {
 }
 
 /* Style to indicate that a row is in edit mode */
-/* Style to indicate that a row is in edit mode */
 table tr.edit-mode:nth-child(odd) {
-    background-color: #e6f4ea; /* Light green for odd rows */
-    border-left: 2px solid #4a8a47; /* Green border for clarity */
+    background-color: #e6f4ea;
+    border-left: 2px solid #4a8a47;
     transition: background-color 0.3s ease, border-left 0.3s ease;
 }
 
 table tr.edit-mode:nth-child(even) {
-    background-color: rgb(237, 247, 255); /* Light blue for even rows */
-    border-left: 2px solid rgb(12, 140, 253); /* Same border for consistency */
+    background-color: rgb(237, 247, 255);
+    border-left: 2px solid rgb(12, 140, 253);
     transition: background-color 0.3s ease, border-left 0.3s ease;
 }
 
-/* Adjust input field styles within the editable row */
 table tr.edit-mode td input {
     border: 1px solid #4a8a47;
     padding: 4px;
@@ -476,15 +540,11 @@ table tr.edit-mode td input {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Style when input fields are focused */
 table tr.edit-mode td input:focus {
     border-color: #71c17d;
     outline: none;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
-
-
-
 
 table td.actions {
     display: flex;
@@ -494,7 +554,6 @@ table td.actions {
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-/* Style for action links */
 .save-record, .cancel-edit,
 .edit-record, .delete-record {
     color: #fff;
@@ -579,7 +638,6 @@ table td.actions {
     margin-inline: 8px;
 }
 
-/* Center the "Add New Records" button */
 .button-container {
     display: flex;
     justify-content: center;
@@ -660,7 +718,6 @@ table td.actions {
         left: -100%;
     }
 
-    /* Show close button when sidebar is open */
     .sidebar.open .close-btn {
         display: block;
     }
@@ -702,10 +759,6 @@ table td.actions {
         padding: 1em;
     }
 
-    /* body.modal-open {
-        overflow: hidden;
-    } */
-
     .modal-content {
         min-width: 200px;
         padding: 1em;
@@ -725,7 +778,44 @@ table td.actions {
         width: 97%;
     }
     .modal-content h3 {
-        font-size: 1.24rem;
+        font-size: 1.1rem;
+    }
+
+    .chart-card {
+        width: 100%; 
+    }
+
+    #employeeRolesChart {
+        width: 100%;
+        height: auto;
+    }
+
+    .chart-section {
+        grid-template-columns: 1fr;
+        max-width: calc(100vw - 60px);
+        padding: 0.5rem;
+    }
+
+    .container .bottom-section {
+        margin-inline-start: 0;
+    }
+
+    .message-box {
+        min-width: 100px;
+        font-size: .9rem;
+        padding-block: 5px;
+        margin: 0;
+
+    }
+
+    .close {
+        top: 10px;
+        right: 20px;
     }
 }
 
+@media (max-width: 400px) {
+    .container .bottom-section {
+        display: none;
+    }
+}

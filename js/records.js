@@ -1,6 +1,7 @@
 function openForm(record = null) {
     const recordTypeDropdown = document.getElementById('record-type');
     const recordType = recordTypeDropdown ? recordTypeDropdown.value : document.querySelector('.container.content').getAttribute('data-record-type');
+    document.querySelector('.container.content').classList.add('blur');
 
     // Open the modal
     document.getElementById('form-modal').style.display = 'flex';
@@ -14,7 +15,7 @@ function openForm(record = null) {
     }
 
     const form = document.getElementById('record-form');
-    form.innerHTML = ''; // Clear previous form fields
+    form.innerHTML = '';
 
     // Generate form fields based on record type and populate if editing
     if (recordType === 'eggs') {
@@ -39,11 +40,11 @@ function openForm(record = null) {
     }
 
     // If editing, set the record ID on the form for use during submission
-    if (record) {
-        form.setAttribute('data-edit-id', record.id);
-    } else {
-        form.removeAttribute('data-edit-id'); // For adding new, make sure the ID is not set
-    }
+    // if (record) {
+    //     form.setAttribute('data-edit-id', record.id);
+    // } else {
+    //     form.removeAttribute('data-edit-id'); // For adding new records, make sure the ID is not set
+    // }
 }
 
 
@@ -79,11 +80,11 @@ function submitForm() {
     formData.append('recordType', recordType);
 
     const form = document.getElementById('record-form');
-    const editId = form.getAttribute('data-edit-id');
+    // const editId = form.getAttribute('data-edit-id');
 
-    if (editId) {
-        formData.append('id', editId);  // If we're editing, append the ID
-    }
+    // if (editId) {
+    //     formData.append('id', editId);  
+    // }
 
     // Add form-specific data based on the record type
     if (recordType === 'eggs') {
@@ -107,14 +108,13 @@ function submitForm() {
         formData.append('totalAmount', document.getElementById('total-amount').value);
     }
 
-    // Determine the correct endpoint (submit_record.php for new records, update_record.php for edits)
-    const endpoint = editId ? './includes/update_record.php' : './includes/submit_record.php';
+    const endpoint = './includes/submit_record.php';
 
     fetch(endpoint, {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())  // Expecting JSON response
+    .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
             displayMessage(data.message, 'success');

@@ -10,8 +10,6 @@
 </head>
 <body>
     <?php include 'includes/sidebar.php'; ?>
-    <!-- <php include 'includes/form-modal.php'; ?> -->
-
     <div class="container content" data-record-type="feed">        
         <div class="table-container">
             <table id = "feeds-records-table">

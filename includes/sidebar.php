@@ -55,13 +55,6 @@ if (isset($_SESSION['username'])) {
     <button id="openSidebarBtn" class="toggle-btn">&#9776;</button>
 </header>
 
-<!-- <div class="user-icon">
-    <span class="user-letter">D</span>
-    <div class="tooltip">Test Tooltip</div>
-</div> -->
-
-
-
 <div class="sidebar" id="sidebar">
     <button id="closeSidebarBtn" class="close-btn">&times;</button>
     <p class="text-center"><span class="logo">EPMS</span></p>
@@ -73,9 +66,17 @@ if (isset($_SESSION['username'])) {
         <li><a href="feed-records.php" class="<?php echo $current_page == 'feed-records.php' ? 'active' : ''; ?>"><i class="fa fa-leaf"></i>Feeds</a></li>
         <li><a href="sales-records.php" class="<?php echo $current_page == 'sales-records.php' ? 'active' : ''; ?>"><i class="fa fa-line-chart"></i>Sales</a></li>
         <li><a href="employee-records.php" class="<?php echo $current_page == 'employee-records.php' ? 'active' : ''; ?>"><i class="fa fa-user"></i>Employees</a></li>
-        <li><a href="logout.php" class="<?php echo $current_page == 'logout.php' ? 'active' : ''; ?>"><i class="fa fa-power-off"></i>Logout</a></li>
+        
+        <!-- Ternary control to show Login or Logout based on user login status -->
+        <li>
+            <a href="<?php echo $user_logged_in ? 'logout.php' : 'login.php'; ?>" class="<?php echo $current_page == 'logout.php' ? 'active' : ''; ?>">
+                <i class="fa fa-<?php echo $user_logged_in ? 'power-off' : 'sign-in'; ?>"></i>
+                <?php echo $user_logged_in ? 'Logout' : 'Login'; ?>
+            </a>
+        </li>
     </ul>
 </div>
+
 
 
 <script>

@@ -12,6 +12,17 @@ function isBirdProduct($productName) {
             stripos($productNameLower, 'chick') !== false);
 }
 
+function isNonStockProduct($productName) {
+    // List of products that don’t require stock validation (like manure, wings, etc.)
+    $nonStockProducts = ['manure', 'chicken wings', 'sausage']; // You can add more products as needed
+    foreach ($nonStockProducts as $product) {
+        if (stripos($productName, $product) !== false) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function validateNotEmpty($input, $fieldName) {
     if (empty(trim($input))) {
         throw new Exception($fieldName . " is required.");
@@ -21,14 +32,14 @@ function validateNotEmpty($input, $fieldName) {
 
 function validateNumeric($input, $fieldName) {
     if (!is_numeric($input)) {
-        throw new Exception($fieldName . " must be a number.");
+        throw new Exception($fieldName . " must be a valid number and cannot be empty.");
     }
     return $input;
 }
 
 function validateDate($input, $fieldName) {
     if (!strtotime($input)) {
-        throw new Exception("Invalid date format in " . $fieldName);
+        throw new Exception("Invalid or empty date in " . $fieldName);
     }
     return $input;
 }
@@ -36,6 +47,8 @@ function validateDate($input, $fieldName) {
 $recordType = $_POST['recordType'] ?? '';
 
 $response = [];
+
+header('Content-Type: application/json');  // Ensure JSON response
 
 try {
     if ($recordType == 'eggs') {
@@ -45,7 +58,7 @@ try {
         $stmt = $conn->prepare("INSERT INTO eggs (egg_count, date) VALUES (?, ?)");
         $stmt->execute([$eggCount, $eggDate]);
 
-        $response['message'] = "Egg record added and inventory updated successfully!";
+        $response['message'] = "Egg record added and system updated successfully!";
 
     } elseif ($recordType == 'birds') {
         $birdType = validateNotEmpty($_POST['birdType'], 'Bird Type');
@@ -54,7 +67,7 @@ try {
         $stmt = $conn->prepare("INSERT INTO birds (bird_type, bird_quantity) VALUES (?, ?)");
         $stmt->execute([$birdType, $birdQuantity]);
 
-        $response['message'] = "Bird record added and inventory updated successfully!";
+        $response['message'] = "Bird record added and system updated successfully!";
 
     } elseif ($recordType == 'feed') {
         $feedType = validateNotEmpty($_POST['feedType'], 'Feed Type');
@@ -64,7 +77,7 @@ try {
         $stmt = $conn->prepare("INSERT INTO feed (feed_type, feed_quantity, feed_date) VALUES (?, ?, ?)");
         $stmt->execute([$feedType, $feedQuantity, $feedDate]);
 
-        $response['message'] = "Feed record added and inventory updated successfully!";
+        $response['message'] = "Feed record added and system updated successfully!";
 
     } elseif ($recordType == 'employee') {
         $employeeName = validateNotEmpty($_POST['employeeName'], 'Employee Name');
@@ -81,10 +94,9 @@ try {
         $quantitySold = validateNumeric($_POST['quantitySold'], 'Quantity Sold');
         $saleDate = validateDate($_POST['saleDate'], 'Sale Date');
         $totalAmount = validateNumeric($_POST['totalAmount'], 'Total Amount');
-
-        // Check if the product sold is eggs or birds, and handle accordingly
+        
+        // Handle eggs with stock validation
         if (isEggProduct($productName)) {
-            // Start deduction from egg records in FIFO order
             $stmt = $conn->prepare("SELECT id, egg_count FROM eggs WHERE egg_count > 0 ORDER BY date ASC");
             $stmt->execute();
             $result = $stmt->get_result();
@@ -119,12 +131,11 @@ try {
                 throw new Exception("Failed to fetch egg stock.");
             }
 
-            // Record the sale after stock check for eggs passes
             $stmt = $conn->prepare("INSERT INTO sales (product_name, quantity_sold, sale_date, total_amount) VALUES (?, ?, ?, ?)");
             $stmt->execute([$productName, $quantitySold, $saleDate, $totalAmount]);
 
+        // Handle birds with stock validation
         } elseif (isBirdProduct($productName)) {
-            // Start deduction from bird records
             $stmt = $conn->prepare("SELECT id, bird_quantity FROM birds WHERE bird_type = ? AND bird_quantity > 0 ORDER BY id ASC");
             $stmt->execute([$productName]);
             $result = $stmt->get_result();
@@ -159,15 +170,20 @@ try {
                 throw new Exception("No bird stock available for the sale or product does not exist.");
             }
 
-            // Record the sale after stock check for birds passes
+            $stmt = $conn->prepare("INSERT INTO sales (product_name, quantity_sold, sale_date, total_amount) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$productName, $quantitySold, $saleDate, $totalAmount]);
+
+        // Handle non-stock products (like manure, wings, etc.)
+        } elseif (isNonStockProduct($productName)) {
+            // Simply record the sale without stock validation for non-stock products
             $stmt = $conn->prepare("INSERT INTO sales (product_name, quantity_sold, sale_date, total_amount) VALUES (?, ?, ?, ?)");
             $stmt->execute([$productName, $quantitySold, $saleDate, $totalAmount]);
 
         } else {
-            throw new Exception("Invalid product name.");
+            throw new Exception("Invalid product or unrecognized product category.");
         }
 
-        $response['message'] = "Sales record added and inventory updated successfully!";
+        $response['message'] = "Sales record added and system updated successfully!";
     }
 
     $response['status'] = 'success';
@@ -177,10 +193,5 @@ try {
     $response['message'] = 'Error: ' . $e->getMessage();
 }
 
-// Return the response as JSON
-header('Content-Type: application/json');
 echo json_encode($response);
-
 ?>
-
-
